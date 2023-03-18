@@ -1,0 +1,19 @@
+{
+  "name": "stock-keeper",
+  "version": "1.0.0",
+  "description": "Full stack web application for managing a product inventory",
+  "scripts": {
+    "dev:server": "npm run dev --prefix server",
+    "dev": "concurrently \"npm run dev:server\"",
+    "lint:server": "npm run lint --prefix server",
+    "lint": "concurrently \"npm run lint:server\"",
+    "typecheck:server": "npm run typecheck --prefix server"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/morgan": "^1.9.4",
+    "concurrently": "^7.6.0"
+  }
+}
