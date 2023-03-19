@@ -11,6 +11,7 @@ module.exports = {
         sourceType: 'module',
         tsconfigRootDir: __dirname,
     },
+    ignorePatterns: ['config/**/*.ts'],
     root: true,
     rules: {
         '@typescript-eslint/restrict-template-expressions': 'off',

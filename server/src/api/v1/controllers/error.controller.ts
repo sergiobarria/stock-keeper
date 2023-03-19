@@ -83,7 +83,7 @@ export const globalErrorHandler = (err: APIError, _: Request, res: Response, nex
         error = handleDuplicateKeyError(err)
     }
 
-    if (ENV !== 'development') {
+    if (ENV === 'development') {
         error.stack = err.stack
 
         res.status(error.statusCode).json(error)

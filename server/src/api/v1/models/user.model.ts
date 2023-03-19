@@ -1,3 +1,5 @@
+import * as crypto from 'crypto'
+
 import { Schema, model, type CallbackError, type Document } from 'mongoose'
 import validator from 'validator'
 import bcrypt from 'bcryptjs'
@@ -11,11 +13,15 @@ export interface IUser {
     phone?: string
     bio?: string
     passwordChangedAt?: Date
+    passwordResetToken?: string
+    passwordResetExpires?: number
+    active?: boolean
 }
 
 export interface IUserMethods {
     comparePasswords: (candidatePassword: string, userPassword: string) => Promise<boolean>
     changedPasswordAfter: (JWTTimestamp: number) => boolean
+    createPasswordResetToken: () => string
 }
 
 export type UserModel = IUser & IUserMethods & Document
@@ -59,6 +65,8 @@ const userSchema = new Schema<UserModel>(
             maxlength: [500, 'Bio must be less than 500 characters'],
         },
         passwordChangedAt: Date,
+        passwordResetToken: String,
+        passwordResetExpires: Number,
     },
     { timestamps: true, versionKey: false }
 )
@@ -80,6 +88,15 @@ userSchema.methods.changedPasswordAfter = function (this: UserModel, JWTTimestam
 
     // False means NOT changed
     return false
+}
+
+// Create password reset token
+userSchema.methods.createPasswordResetToken = function (this: UserModel) {
+    const resetToken = crypto.randomBytes(32).toString('hex')
+    this.passwordResetToken = crypto.createHash('sha256').update(resetToken).digest('hex')
+    this.passwordResetExpires = Date.now() + 10 * 60 * 1000 // 10 minutes
+
+    return resetToken
 }
 
 // ======== Pre Save Middlewares ========
