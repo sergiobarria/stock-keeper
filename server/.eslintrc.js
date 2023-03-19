@@ -14,5 +14,6 @@ module.exports = {
     root: true,
     rules: {
         '@typescript-eslint/restrict-template-expressions': 'off',
+        '@typescript-eslint/no-confusing-void-expression': 'off',
     },
 }

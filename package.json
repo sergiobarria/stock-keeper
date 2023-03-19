@@ -3,6 +3,10 @@
   "version": "1.0.0",
   "description": "Full stack web application for managing a product inventory",
   "scripts": {
+    "build:server": "npm run build --prefix server",
+    "build": "npm run build:server && npm run build:client",
+    "start:server": "npm run start --prefix server",
+    "start": "concurrently \"npm run start:server\"",
     "dev:server": "npm run dev --prefix server",
     "dev": "concurrently \"npm run dev:server\"",
     "lint:server": "npm run lint --prefix server",
@@ -14,6 +18,10 @@
   "license": "ISC",
   "devDependencies": {
     "@types/morgan": "^1.9.4",
+    "@types/ms": "^0.7.31",
     "concurrently": "^7.6.0"
+  },
+  "dependencies": {
+    "ms": "^2.1.3"
   }
 }
