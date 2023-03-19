@@ -1,8 +1,8 @@
-import { Schema, model, type Model, type CallbackError, type Document } from 'mongoose'
+import { Schema, model, type CallbackError, type Document } from 'mongoose'
 import validator from 'validator'
 import bcrypt from 'bcryptjs'
 
-export interface IUser extends Document {
+export interface IUser {
     name: string
     email: string
     password?: string
@@ -10,15 +10,17 @@ export interface IUser extends Document {
     photo?: string
     phone?: string
     bio?: string
+    passwordChangedAt?: Date
 }
 
 export interface IUserMethods {
     comparePasswords: (candidatePassword: string, userPassword: string) => Promise<boolean>
+    changedPasswordAfter: (JWTTimestamp: number) => boolean
 }
 
-type UserModel = Model<IUser, any, IUserMethods>
+export type UserModel = IUser & IUserMethods & Document
 
-const userSchema = new Schema<IUser, UserModel, IUserMethods>(
+const userSchema = new Schema<UserModel>(
     {
         name: {
             type: String,
@@ -56,6 +58,7 @@ const userSchema = new Schema<IUser, UserModel, IUserMethods>(
             type: String,
             maxlength: [500, 'Bio must be less than 500 characters'],
         },
+        passwordChangedAt: Date,
     },
     { timestamps: true, versionKey: false }
 )
@@ -67,8 +70,20 @@ userSchema.methods.comparePasswords = async function (candidatePassword: string,
     return isMatch
 }
 
+// Check if password was changed after the token was issued
+userSchema.methods.changedPasswordAfter = function (this: UserModel, JWTTimestamp: number) {
+    if (this.passwordChangedAt !== undefined) {
+        const changedTimestamp = parseInt((this.passwordChangedAt.getTime() / 1000).toString(), 10) // Convert to seconds
+
+        return JWTTimestamp < changedTimestamp
+    }
+
+    // False means NOT changed
+    return false
+}
+
 // ======== Pre Save Middlewares ========
-userSchema.pre<IUser>(/save/, async function (next: (error?: CallbackError) => void) {
+userSchema.pre<UserModel>(/save/, async function (next: (error?: CallbackError) => void) {
     if (!this.isModified('password')) return next() // Only run this function if password was modified
 
     if (this.password !== undefined) {
@@ -80,6 +95,4 @@ userSchema.pre<IUser>(/save/, async function (next: (error?: CallbackError) => v
     next()
 })
 
-export const User = model<IUser, UserModel>('User', userSchema)
-// export const User: Model<IUser> = model('User', userSchema)
-// export type UserDocument = ReturnType<(typeof User)['hydrate']>
+export const User = model<UserModel>('User', userSchema)

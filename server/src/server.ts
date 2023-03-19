@@ -32,7 +32,7 @@ async function main(): Promise<void> {
 
     try {
         server.listen(PORT, () => {
-            logger.info(chalk.greenBright.bold.underline(`Server running in ${NODE_ENV} mode on port ${PORT}`))
+            logger.info(chalk.greenBright.bold.underline(`Server running in ${NODE_ENV} mode on port ${PORT} 🚀`))
         })
     } catch (error: any) {
         logger.error(chalk.redBright.bold.underline(`Error: ${error.message}`))

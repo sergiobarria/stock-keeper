@@ -1,36 +1,34 @@
 import { z } from 'zod'
 
-export const userSchema = z
-    .object({
-        name: z
-            .string({
-                required_error: 'Name is required',
-            })
-            .nonempty(),
-        email: z
-            .string({
-                required_error: 'Email is required',
-            })
-            .email(),
-        password: z
-            .string({
-                required_error: 'Password is required',
-            })
-            .min(8, { message: 'Password must be at least 8 characters' }),
-        passwordConfirm: z.string({
-            required_error: 'Password confirmation is required',
-        }),
-        photo: z.string().optional(),
-        phone: z.string().optional(),
-        bio: z.string().max(500).optional(),
-    })
-    .refine(data => data.password === data.passwordConfirm, {
-        message: 'Passwords do not match',
-        path: ['passwordConfirm'],
-    })
+export const userSchema = z.object({
+    name: z
+        .string({
+            required_error: 'Name is required',
+        })
+        .nonempty(),
+    email: z
+        .string({
+            required_error: 'Email is required',
+        })
+        .email(),
+    password: z
+        .string({
+            required_error: 'Password is required',
+        })
+        .min(8, { message: 'Password must be at least 8 characters' }),
+    passwordConfirm: z.string({
+        required_error: 'Password confirmation is required',
+    }),
+    photo: z.string().optional(),
+    phone: z.string().optional(),
+    bio: z.string().max(500).optional(),
+})
 
 export const registerSchema = z.object({
-    body: userSchema,
+    body: userSchema.refine(data => data.password === data.passwordConfirm, {
+        message: 'Passwords do not match',
+        path: ['passwordConfirm'],
+    }),
 })
 
 export const loginSchema = z.object({
@@ -55,6 +53,11 @@ export const userInputSchema = z.object({
     }),
 })
 
+export const updateMeSchema = z.object({
+    body: userSchema.merge(z.object({ id: z.string() })),
+})
+
 export type CreateUserType = z.infer<typeof userInputSchema>['body']
 export type GetUserType = z.infer<typeof userInputSchema>['params']
 export type LoginUserType = z.infer<typeof loginSchema>['body']
+export type UpdateUserType = z.infer<typeof userInputSchema>['body']

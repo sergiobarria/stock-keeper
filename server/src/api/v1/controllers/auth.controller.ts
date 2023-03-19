@@ -2,10 +2,10 @@ import type { Request, Response, NextFunction } from 'express'
 import asyncHandler from 'express-async-handler'
 import httpStatus from 'http-status'
 
-import { User } from '@/api/v1/models/user.model'
 import type { CreateUserType, LoginUserType } from '../schemas/user.schemas'
 import { APIError, createAndSendToken } from '@/lib'
 import { token } from '@/constants'
+import { createUser, findUser } from '../services/user.service'
 
 /**
  * @desc: Register a new user
@@ -16,14 +16,7 @@ export const registerHandler = asyncHandler(
     async (req: Request<any, any, CreateUserType>, res: Response, _: NextFunction) => {
         const { name, email, password, passwordConfirm, phone, photo } = req.body
 
-        const user = await User.create({
-            name,
-            email,
-            password,
-            passwordConfirm,
-            phone,
-            photo,
-        })
+        const user = await createUser({ name, email, password, passwordConfirm, phone, photo })
 
         createAndSendToken({ user, statusCode: httpStatus.CREATED, message: 'User successfully registered', res })
     }
@@ -39,7 +32,7 @@ export const loginHandler = asyncHandler(
         const { email, password } = req.body
 
         // Check if user exists and password is correct
-        const user = await User.findOne({ email }).select('+password')
+        const user = await findUser({ email })
         const isPasswordCorrect = await user?.comparePasswords(password, user?.password as string)
 
         if (user === null || isPasswordCorrect === false) {

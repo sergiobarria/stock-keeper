@@ -5,7 +5,7 @@ import jwt from 'jsonwebtoken'
 import ms from 'ms'
 
 import { APIError } from '@/lib'
-import type { IUser } from '@/api/v1/models/user.model'
+import type { UserModel } from '@/api/v1/models/user.model'
 import { token } from '@/constants'
 
 const JWT_SECRET = config.get<string>('JWT_SECRET')
@@ -22,7 +22,7 @@ export const generateToken = (id: string | ObjectId): string => {
 }
 
 interface CreateAndSendProps {
-    user: IUser
+    user: UserModel
     statusCode: number
     message: string
     res: Response
