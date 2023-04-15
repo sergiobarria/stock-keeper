@@ -1,23 +1,19 @@
-import express, { type NextFunction, type Request, type Response } from 'express'
-import { globalErrorHandler } from './api/v1/controllers/error.controller'
+import express from 'express'
+import config from 'config'
 
-import { apiV1Router } from './api/v1/routes'
-import { APIError } from './lib/apiError'
+import { routerV1 } from './router/v1'
 import { morganMiddleware } from './middlewares'
 
-const app = express()
+export const app = express()
+const env = config.get<string>('NODE_ENV')
 
-// Apply middleware here 👇🏼
+// ===== Register Middleware 👇🏼 =====
 app.use(express.json())
-app.use(morganMiddleware)
+if (env === 'development') {
+    app.use(morganMiddleware)
+}
 
-// Apply routes here 👇🏼
-app.use('/api/v1', apiV1Router)
+// ===== Register Routes 👇🏼 =====
+app.use('/api/v1', routerV1)
 
-app.all('*', (req: Request, _: Response, next: NextFunction) => {
-    next(APIError.notFound(`Can't find ${req.originalUrl} on this server!`))
-})
-
-app.use(globalErrorHandler)
-
-export { app }
+// ===== Register Prisma Middleware 👇🏼 =====
