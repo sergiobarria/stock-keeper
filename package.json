@@ -17,13 +17,22 @@
         "typecheck:server": "npm run typecheck --prefix server",
         "typecheck": "npm run typecheck:server",
         "format:server": "npm run format --prefix server",
-        "format": "npm run format:server"
+        "format": "npm run format:server",
+        "lint-staged": "lint-staged",
+        "prepare": "husky install"
     },
     "keywords": [],
     "author": "",
     "license": "ISC",
     "devDependencies": {
-        "concurrently": "^7.6.0"
+        "concurrently": "^7.6.0",
+        "husky": "^8.0.3",
+        "lint-staged": "^13.2.1"
     },
-    "dependencies": {}
+    "lint-staged": {
+        "server/**/*.{ts}": [
+            "npm run lint:server",
+            "npm run format:server"
+        ]
+    }
 }
