@@ -5,3 +5,7 @@ logs
 # dotenv environment variables file
 .env
 .env.*
+
+# others
+.DS_Store
+_old/
