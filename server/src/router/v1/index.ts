@@ -1,6 +1,8 @@
 import express, { type Request, type Response } from 'express'
 import httpStatus from 'http-status'
 
+import { authRouter } from './auth'
+
 const router = express.Router()
 
 /**
@@ -20,5 +22,8 @@ router.get('/healthcheck', (_: Request, res: Response) => {
         }
     })
 })
+
+// ===== Register Routes 👇🏼 =====
+router.use('/auth', authRouter)
 
 export { router as routerV1 }
