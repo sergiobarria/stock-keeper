@@ -8,6 +8,11 @@ import type { LoginUserInput, RegisterUserInput } from './auth.schemas'
 import * as services from './auth.services'
 import { APIError } from '../../../utils'
 
+/**
+ * @desc: Register a new user
+ * @endpoint: POST /api/v1/auth/register
+ * @access: public
+ */
 export const registerUserHandler = asyncHandler(
     async (req: Request<any, any, RegisterUserInput>, res: Response, next: NextFunction) => {
         const user = await services.createOne(req.body)
@@ -33,6 +38,11 @@ export const registerUserHandler = asyncHandler(
     }
 )
 
+/**
+ * @desc: Login user
+ * @endpoint: POST /api/v1/auth/login
+ * @access: public
+ */
 export const loginUserHandler = asyncHandler(
     async (req: Request<any, any, LoginUserInput>, res: Response, next: NextFunction) => {
         const user = await services.login(req.body)
@@ -56,3 +66,23 @@ export const loginUserHandler = asyncHandler(
         })
     }
 )
+
+/**
+ * @desc: Logout user
+ * @endpoint: GET /api/v1/auth/logout
+ * @access: private
+ */
+export const logoutUserHandler = asyncHandler(async (req: Request, res: Response) => {
+    res.cookie('token', '', {
+        httpOnly: true,
+        secure: config.get<string>('NODE_ENV') === 'production',
+        sameSite: 'none',
+        expires: new Date(0) // 0 means expire immediately
+    })
+
+    res.status(httpStatus.OK).json({
+        success: true,
+        message: 'logged out successfully',
+        data: null
+    })
+})
