@@ -19,6 +19,7 @@
         "format:server": "npm run format --prefix server",
         "format": "npm run format:server",
         "lint-staged": "lint-staged",
+        "generate": "npm run generate --prefix server",
         "prepare": "husky install"
     },
     "keywords": [],
