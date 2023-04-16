@@ -8,7 +8,7 @@
         "start": "node dist/server.js",
         "dev": "tsx watch ./src/server.ts watch ./config/**/*.ts --project ./tsconfig.json",
         "lint": "eslint --ext .ts ./src",
-        "lint:fix": "eslint --ext .ts ./src --fix",
+        "lint-fix": "eslint --ext .ts ./src --fix",
         "typecheck": "tsc --noEmit",
         "format": "prettier --write ./src/**/*",
         "generate": "npx prisma generate"
