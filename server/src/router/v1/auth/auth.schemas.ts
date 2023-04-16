@@ -36,4 +36,21 @@ export const registerSchema = z.object({
         })
 })
 
+export const loginSchema = z.object({
+    body: z.object({
+        email: z
+            .string({
+                required_error: 'Email is required'
+            })
+            .email(),
+        password: z
+            .string({
+                required_error: 'Password is required'
+            })
+            .min(8)
+            .max(30)
+    })
+})
+
 export type RegisterUserInput = z.infer<typeof registerSchema>['body']
+export type LoginUserInput = z.infer<typeof loginSchema>['body']
